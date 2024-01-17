@@ -1,8 +1,8 @@
 const router = require("express").Router();
-import { getHomePage } from '../controller/homeController';
+import { OrchidsPage } from '../controller/orchidsController';
 
 const iniOrchidRoute = (app) => {
-    router.get('/', getHomePage);
+    router.get('/', OrchidsPage);
 
     return app.use('/Orchids', router);
 }

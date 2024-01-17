@@ -1,0 +1,17 @@
+.container {
+    display: flex;
+    .images {
+        height: 7.5rem;
+        width: 10rem;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-color: #eee;
+    }
+    
+    .colors {
+        &:hover {
+          cursor: pointer;
+        }
+    }
+}
