@@ -6,7 +6,7 @@ const router = express.Router();
 const initWebRouter = (app) => {
     router.get('/', getHomePage);
 
-    return app.use('/', router);
+    return app.use('/Orchids', router);
 }
 
 export {
