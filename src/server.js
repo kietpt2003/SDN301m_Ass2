@@ -3,8 +3,8 @@ import { configENV } from './config/configENV';
 import express from 'express';
 import { configLog } from './config/configLogServer';
 import { configViewEngine } from './config/viewEngine';
-import { initWebRouter } from './routes/web';
-import { iniAPIRoute } from './routes/api';
+import { initCategoryRouter } from './routes/categoryRouter';
+import { iniOrchidRoute } from './routes/orchidRouter';
 const app = express();
 
 //Config .env
@@ -20,11 +20,11 @@ configViewEngine(app);
 app.get('/', function (req, res) {
     res.redirect('/Orchids');
 });
-//Init web routes
-initWebRouter(app);
+//Init category routes
+initCategoryRouter(app);
 
-//Init api routes
-iniAPIRoute(app);
+//Init orchid routes
+iniOrchidRoute(app);
 
 const port = process.env.PORT || 8888;
 

@@ -1,14 +1,12 @@
-import express from 'express';
+const router = require("express").Router();
 import { getHomePage } from '../controller/homeController';
 
-const router = express.Router();
-
-const initWebRouter = (app) => {
+const iniOrchidRoute = (app) => {
     router.get('/', getHomePage);
 
     return app.use('/Orchids', router);
 }
 
 export {
-    initWebRouter
-}
+    iniOrchidRoute
+};
