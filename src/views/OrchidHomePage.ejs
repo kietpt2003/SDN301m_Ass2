@@ -19,30 +19,35 @@
 
     <% arrOrchids.forEach(function(orchid, index) { %>
         <div class="container">
-            <div>
-                <div class="images" style="background-image: url(<%= orchid.image %>);">
+            <div class="product">
+                <div class="product-left">
+                    <div class="images" style="background-image: url(<%= orchid.image %>);">
+                    </div>
                 </div>
-                <div>
-                    <p class="pick-color">Available Colors:
-                    </p>
-                    <div class="colors">
-                        <span style="color: <%= orchid.color %>;" class="material-symbols-outlined">
-                            radio_button_checked
-                        </span>
+                <div class="product-right">
+                    <div class="product-top">
+                        <p class="product-collection">Orchid Collection</p>
+                        <h1 class="product-name">
+                            <%= orchid.name %>
+                        </h1>
+
+                        <h1 class="product-price">$<%= orchid.price %>
+                        </h1>
+                        <div class="product-color">
+                            <p class="pick-color">Available Colors:
+                            </p>
+                            <div class="colors">
+                                <span style="color: <%= orchid.color %>;" class="material-symbols-outlined">
+                                    radio_button_checked
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-bottom">
+                        <button>Buy Now</button>
                     </div>
                 </div>
             </div>
-            <div>
-                <h2>
-                    <%= orchid.name %> <br>
-                        <span>Orchid Collection</span>
-                </h2>
-
-                <h3>$<%= orchid.price %>
-                </h3>
-                <button>Buy Now</button>
-            </div>
-
         </div>
         <% }) %>
 </body>
