@@ -1,3 +1,3 @@
 export const getCategories = async (req, res) => {
-    return res.send("Hello api");
+    return res.render('CategoryPage.ejs');
 }
