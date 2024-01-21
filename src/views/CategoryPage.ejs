@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/styles.scss" />
-    <link rel="stylesheet" href="/css/product.scss" />
+    <link rel="stylesheet" href="/css/category.scss" />
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <title>Document</title>
@@ -16,7 +16,47 @@
         <a class="active" href="/categories">Categories</a>
     </div>
 
-    <p>Category</p>
+    <div class="create-form">
+        <h2>Create Category Form</h2>
+        <form action="/categories" method="post">
+            <div class="input-group">
+                <label for="cateName">Category name:</label>
+                <input type="text" name="cateName" />
+            </div>
+            <div class="input-group">
+                <label for="description">Description:</label>
+                <input type="text" name="description">
+            </div>
+            <div class="input-group">
+                <button>Create</button>
+            </div>
+        </form>
+    </div>
+
+
+    <% if (typeof arrCategories !=='undefined' ) { %>
+        <div class="container">
+            <% arrCategories.forEach(function(category, index) { %>
+                <div class="category">
+                    <div class="category-top">
+                        <h4 class="category-collection">Category Collection</>
+                            <h3 class="category-name">
+                                <%= category.name %>
+                            </h3>
+                            <div class="category-description">
+                                <h3>Description:
+                                </h3>
+                                <p>
+                                    <%= category.description %>
+                                </p>
+                            </div>
+                    </div>
+                </div>
+                <% }) %>
+        </div>
+        <% } else { %>
+            <p>Nothing to show</p>
+            <% } %>
 </body>
 
 </html>
