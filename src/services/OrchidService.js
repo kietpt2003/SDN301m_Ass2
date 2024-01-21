@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import Orchids from '../models/Orchids'
 
 export const getAllOrchids = async () => {
-    const url = 'mongodb://localhost:27017/shoppingFlower';
+    const url = process.env.URL_DB;
     const connect = mongoose.connect(url, { family: 4 });
     let arrOrchids = [];
 
