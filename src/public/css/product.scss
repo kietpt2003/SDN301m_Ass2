@@ -1,17 +1,15 @@
 .container {
     display: flex;
     justify-content: center;
-    border: 1px solid blue;
-    background-color: rgba(1,1,1,0.1);
+    flex-wrap: wrap;
     .product {
         display: flex;
         justify-content: space-around;
         padding: 1rem;
         margin: 1rem;
-        border: 1px solid red;
         border-radius: 1rem;
         background-color: rgba(249, 176, 241, 0.1);
-        width: 80%;
+        width: 40%;
         .product-left {
             width: 60%;
             .images {
@@ -38,6 +36,7 @@
                     text-transform: uppercase;
                 }
                 .product-name {
+                    font-size: larger;
                     text-transform: uppercase;
                 }
                 .product-price {

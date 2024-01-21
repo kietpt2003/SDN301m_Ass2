@@ -15,40 +15,43 @@
         <a class="active" href="/">Orchids</a>
         <a href="/categories">Categories</a>
     </div>
-
-    <% arrOrchids.forEach(function(orchid, index) { %>
+    <% if (typeof arrOrchids !=='undefined' ) { %>
         <div class="container">
-            <div class="product">
-                <div class="product-left">
-                    <div class="images" style="background-image: url(<%= orchid.image %>);">
-                    </div>
-                </div>
-                <div class="product-right">
-                    <div class="product-top">
-                        <p class="product-collection">Orchid Collection</p>
-                        <h1 class="product-name">
-                            <%= orchid.name %>
-                        </h1>
-
-                        <h1 class="product-price">$<%= orchid.price %>
-                        </h1>
-                        <div class="product-color">
-                            <p class="pick-color">Available Colors:
-                            </p>
-                            <div class="colors">
-                                <span style="color: <%= orchid.color %>;" class="material-symbols-outlined">
-                                    radio_button_checked
-                                </span>
-                            </div>
+            <% arrOrchids.forEach(function(orchid, index) { %>
+                <div class="product">
+                    <div class="product-left">
+                        <div class="images" style="background-image: url(<%= orchid.image %>);">
                         </div>
                     </div>
-                    <div class="product-bottom">
-                        <button>Buy Now</button>
+                    <div class="product-right">
+                        <div class="product-top">
+                            <p class="product-collection">Orchid Collection</p>
+                            <h1 class="product-name">
+                                <%= orchid.name %>
+                            </h1>
+
+                            <h1 class="product-price">$<%= orchid.price %>
+                            </h1>
+                            <div class="product-color">
+                                <p class="pick-color">Available Colors:
+                                </p>
+                                <div class="colors">
+                                    <span style="color: <%= orchid.color %>;" class="material-symbols-outlined">
+                                        radio_button_checked
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-bottom">
+                            <button>Buy Now</button>
+                        </div>
                     </div>
                 </div>
-            </div>
+                <% }) %>
         </div>
-        <% }) %>
+        <% } else { %>
+            <p>Nothing to show</p>
+            <% } %>
 </body>
 
 </html>
