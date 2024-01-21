@@ -5,7 +5,11 @@ import { configLog } from './config/configLogServer';
 import { configViewEngine } from './config/viewEngine';
 import { initCategoryRouter } from './routes/categoryRouter';
 import { iniOrchidRoute } from './routes/orchidRouter';
+import { configBodyParse } from './config/configBodyParser';
 const app = express();
+
+//Config Body-Parser
+configBodyParse(app);
 
 //Config .env
 configENV(dotenv);
