@@ -7,7 +7,15 @@
     <link rel="stylesheet" href="/css/category.scss" />
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <title>Document</title>
+    <title>Assignment 2</title>
+    <script>
+        // When the user clicks on <div>, open the popup
+        function myFunction(index) {
+            console.log('test: ', index);
+            var popup = document.getElementById(`myPopup${index}`);
+            popup.classList.toggle("show");
+        }
+    </script>
 </head>
 
 <body>
@@ -23,34 +31,77 @@
                 <label for="cateName">Category name:</label>
                 <input type="text" name="cateName" />
             </div>
-            <div class="input-group">
-                <label for="description">Description:</label>
-                <input type="text" name="description">
-            </div>
-            <div class="input-group">
-                <button>Create</button>
-            </div>
+            <!-- Empty name -->
+            <% if (typeof error !=='undefined' ) { %>
+                <% if (typeof error.isEmptyName !=='undefined' ) { %>
+                    <p class="error">
+                        <%= error.isEmptyName %>
+                    </p>
+                    <% } %>
+                        <% } %>
+                            <div class="input-group">
+                                <label for="description">Description:</label>
+                                <input type="text" name="description">
+                            </div>
+                            <!-- Empty Description -->
+                            <% if (typeof error !=='undefined' ) { %>
+                                <% if (typeof error.isEmptyDes !=='undefined' ) { %>
+                                    <p class="error">
+                                        <%= error.isEmptyDes %>
+                                    </p>
+                                    <% } %>
+                                        <% } %>
+                                            <div class="input-group">
+                                                <button>Create</button>
+                                            </div>
+                                            <!-- Duplicate -->
+                                            <% if (typeof error !=='undefined' ) { %>
+                                                <% if (typeof error.isDup !=='undefined' ) { %>
+                                                    <p class="error">
+                                                        <%= error.isDup %>
+                                                    </p>
+                                                    <% } %>
+                                                        <% } %>
+                                                            <!-- Success -->
+                                                            <% if (typeof isSuccess !=='undefined' ) { %>
+                                                                <p class="success">
+                                                                    Create Success!
+                                                                </p>
+                                                                <% } %>
         </form>
     </div>
-
 
     <% if (typeof arrCategories !=='undefined' ) { %>
         <div class="container">
             <% arrCategories.forEach(function(category, index) { %>
                 <div class="category">
-                    <div class="category-top">
-                        <h4 class="category-collection">Category Collection</>
-                            <h3 class="category-name">
-                                <%= category.name %>
-                            </h3>
-                            <div class="category-description">
-                                <h3>Description:
-                                </h3>
-                                <p>
-                                    <%= category.description %>
-                                </p>
+                    <form class="category-top" action="/categories/<%= category._id %>" method="post">
+                        <div class="cate-header">
+                            <h4 class="category-collection">Category Collection
+                            </h4>
+                            <div class="popup" onclick="myFunction(<%= index %>)">
+                                <span class="material-symbols-outlined">
+                                    delete
+                                </span>
+                                <button class="popuptext" id="myPopup<%= index %>">
+                                    Delete
+                                </button>
                             </div>
-                    </div>
+                        </div>
+                        <!-- <button><span class="material-symbols-outlined">
+                                delete -->
+                        </span></button>
+                        <h3 class="category-name">
+                            <%= category.name %>
+                        </h3>
+                        <div class="category-description">
+                            <h3>Description:
+                            </h3>
+                            <p>
+                                <%= category.description %>
+                            </p>
+                        </div>
+                    </form>
                 </div>
                 <% }) %>
         </div>
