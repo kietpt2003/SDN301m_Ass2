@@ -10,7 +10,8 @@ export const getAllCategories = async () => {
     arrCategories = connect.then(() => {
         console.log('Connected correctly to server');
         return Categories.find({})
-            .then((categories) => {
+            .then(async (categories) => {
+                await mongoose.disconnect();
                 return categories;
             })
             .catch((err) => {
@@ -44,7 +45,6 @@ export const createCategory = async (newCategory) => {
             }
             let isExist = await checkCateName(newCategory.cateName);
             if (isExist) {
-                console.log('dup name');
                 error.isDup = 'Name Duplicated';
                 isError = true;
                 resolve({
@@ -60,12 +60,14 @@ export const createCategory = async (newCategory) => {
                         .then(async (cate) => {
                             if (cate) {
                                 arr = await getAllCategories();
+                                await mongoose.disconnect();
                                 resolve({
                                     arrCategories: arr,
                                     isSuccess: true
                                 });
                             } else {
                                 error.createfailed = 'Something wrong';
+                                await mongoose.disconnect();
                                 resolve({
                                     error: error,
                                     arrCategories: arr
@@ -75,7 +77,8 @@ export const createCategory = async (newCategory) => {
                 })
             }
         } catch (error) {
-            reject(error)
+            await mongoose.disconnect();
+            reject(error);
         }
     })
 }
@@ -83,10 +86,8 @@ export const createCategory = async (newCategory) => {
 let checkCateName = (name) => {
     return new Promise(async (resolve, reject) => {
         try {
-            console.log('hahah ', name);
             let category = await Categories.findOne({ name: name })
                 .then((category) => {
-                    console.log('check: ', category)
                     return category;
                 })
                 .catch((err) => {
@@ -96,6 +97,83 @@ let checkCateName = (name) => {
                 resolve(true);
             }
             resolve(false);
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+let checkCategoryById = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const url = process.env.URL_DB;
+            const connect = mongoose.connect(url, { family: 4 });
+            connect.then(() => {
+                Categories.findOne({ _id: id })
+                    .then((category) => {
+                        mongoose.disconnect().then(() => {
+                            if (category) {
+                                resolve(true);
+                            }
+                            resolve(false);
+                        });
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        resolve(false);
+                    });
+            })
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+export const deleteCategoryById = async (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const error = {}
+            let arrCategories = await getAllCategories();
+            const isExist = await checkCategoryById(id);
+            if (isExist) {
+                const url = process.env.URL_DB;
+                const connect = mongoose.connect(url, { family: 4 });
+                connect.then(() => {
+                    console.log('vo day roi');
+                    Categories.deleteOne({ "_id": id })
+                        .then(async (category) => {
+                            console.log('delete: ', category);
+                            arrCategories = await getAllCategories();
+                            await mongoose.disconnect();
+                            resolve(
+                                {
+                                    deleteSuccess: true,
+                                    arrCategories: arrCategories
+                                }
+                            )
+                            return category;
+                        })
+                        .catch(async (err) => {
+                            console.log('error check: ', err);
+                            error.dbError = 'Something wrong with DB';
+                            await mongoose.disconnect();
+                            reject(
+                                {
+                                    error: error,
+                                    arrCategories: arrCategories
+                                }
+                            )
+                        });
+                })
+            } else {
+                error.missingId = 'Missing Id or wrong Id'
+                reject(
+                    {
+                        error: error,
+                        arrCategories: arrCategories
+                    }
+                )
+            }
         } catch (error) {
             reject(error)
         }
