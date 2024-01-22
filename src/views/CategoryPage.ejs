@@ -15,6 +15,58 @@
             var popup = document.getElementById(`myPopup${index}`);
             popup.classList.toggle("show");
         }
+
+        function splitString(inputString) {
+            // Sử dụng hàm split để cắt chuỗi thành mảng dựa trên ký tự "&&"
+            const resultArray = inputString.split("&&");
+
+            // Nếu mảng có ít nhất 3 phần tử
+            if (resultArray.length >= 3) {
+                const id = resultArray[0];
+                const name = resultArray[1];
+                const description = resultArray[2];
+                return { id, name, description };
+            } else {
+                // Nếu không đủ phần tử, trả về null hoặc giá trị mặc định tùy vào yêu cầu của bạn
+                return null;
+            }
+        }
+        function getSelectedValue() {
+            // Get the select element
+            const selectElement = document.getElementById("mySelect");
+
+            // Get the selected option
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            // Get the value of the selected option
+            const selectedValue = selectedOption.value;
+
+            const category = splitString(selectedValue);
+
+            document.getElementById('id').value = category.id;
+            document.getElementById('cateName').value = category.name;
+            document.getElementById('description').value = category.description;
+        }
+
+        const handleUpdateForm = () => {
+            document.getElementById("update-form").addEventListener("submit", function (event) {
+                // Prevent the form from submitting
+                event.preventDefault();
+                let category = {};
+                category.id = event.target.elements.id.value;
+                category.name = event.target.elements.cateName.value;
+                category.description = event.target.elements.description.value
+                fetch('/categories', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(category)
+                }).then((response) => {
+                    console.log('check status: ', response.status);
+                })
+            });
+        }
+
     </script>
 </head>
 
@@ -62,13 +114,63 @@
                                                     </p>
                                                     <% } %>
                                                         <% } %>
-                                                            <!-- Success -->
-                                                            <% if (typeof isSuccess !=='undefined' ) { %>
-                                                                <p class="success">
-                                                                    Create Success!
-                                                                </p>
-                                                                <% } %>
         </form>
+    </div>
+
+    <div class="create-form">
+        <h2>Update Category Form</h2>
+        <div class="custom-select">
+            <label for="category">Choose category:</label>
+            <select onchange="getSelectedValue()" id="mySelect">
+                <% if (typeof arrCategories !=='undefined' ) { %>
+                    <% arrCategories.forEach(function(category, index) { %>
+                        <option value="<%=category._id%>&&<%=category.name%>&&<%=category.description%>">
+                            <%= category.name %>
+                        </option>
+                        <% }) %>
+                            <% } %>
+            </select>
+        </div>
+        <% if (typeof arrCategories !=='undefined' ) { %>
+            <form id="update-form" action="/categories">
+                <input id="id" type="text" name="id" hidden />
+                <div class="input-group">
+                    <label for="cateName">Category name:</label>
+                    <input id="cateName" type="text" name="cateName" />
+                </div>
+                <!-- Empty name -->
+                <% if (typeof error !=='undefined' ) { %>
+                    <% if (typeof error.isEmptyName !=='undefined' ) { %>
+                        <p class="error">
+                            <%= error.isEmptyName %>
+                        </p>
+                        <% } %>
+                            <% } %>
+                                <div class="input-group">
+                                    <label for="description">Description:</label>
+                                    <input id="description" type="text" name="description">
+                                </div>
+                                <!-- Empty Description -->
+                                <% if (typeof error !=='undefined' ) { %>
+                                    <% if (typeof error.isEmptyDes !=='undefined' ) { %>
+                                        <p class="error">
+                                            <%= error.isEmptyDes %>
+                                        </p>
+                                        <% } %>
+                                            <% } %>
+                                                <div class="input-group">
+                                                    <button onclick="handleUpdateForm()" type="submit">Update</button>
+                                                </div>
+                                                <!-- Duplicate -->
+                                                <% if (typeof error !=='undefined' ) { %>
+                                                    <% if (typeof error.isDup !=='undefined' ) { %>
+                                                        <p class="error">
+                                                            <%= error.isDup %>
+                                                        </p>
+                                                        <% } %>
+                                                            <% } %>
+            </form>
+            <% } %>
     </div>
 
     <% if (typeof arrCategories !=='undefined' ) { %>
@@ -88,9 +190,6 @@
                                 </button>
                             </div>
                         </div>
-                        <!-- <button><span class="material-symbols-outlined">
-                                delete -->
-                        </span></button>
                         <h3 class="category-name">
                             <%= category.name %>
                         </h3>
@@ -108,6 +207,21 @@
         <% } else { %>
             <p>Nothing to show</p>
             <% } %>
+
+                <!-- Success -->
+                <% if (typeof isSuccess !=='undefined' ) { %>
+                    <div class="alert">
+                        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                        Create success!!
+                    </div>
+                    <% } %>
+                        <!-- Delete Success -->
+                        <% if (typeof deleteSuccess !=='undefined' ) { %>
+                            <div class="alert">
+                                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                                Delete success!!
+                            </div>
+                            <% } %>
 </body>
 
 </html>
