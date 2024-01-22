@@ -1,11 +1,12 @@
 import express from 'express';
-import { getCategories, postCategory } from '../controller/categoriesController'
+import { deleteCategory, getCategories, postCategory } from '../controller/categoriesController'
 
 const router = express.Router();
 
 const initCategoryRouter = (app) => {
     router.get('/', getCategories); //method get <=> read data
-    router.post('/', postCategory)
+    router.post('/', postCategory);
+    router.post('/:id', deleteCategory);
 
     return app.use('/categories', router);
 }
