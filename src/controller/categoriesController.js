@@ -1,8 +1,8 @@
-import { createCategory, deleteCategoryById, getAllCategories } from "../services/CategoryService";
+import { createCategory, deleteCategoryById, getAllCategories, updateCate } from "../services/CategoryService";
 
 export const getCategories = async (req, res) => {
     const arrCategories = await getAllCategories();
-    return res.render('CategoryPage.ejs', { arrCategories });
+    return res.status(200).render('CategoryPage.ejs', { arrCategories });
 }
 
 export const postCategory = async (req, res) => {
@@ -11,12 +11,17 @@ export const postCategory = async (req, res) => {
     if (data.error) {
         return res.status(400).render('CategoryPage.ejs', { arrCategories: data.arrCategories, error: data.error });
     }
-    return res.render('CategoryPage.ejs', { arrCategories: data.arrCategories, isSuccess: data.isSuccess });
+    return res.status(200).render('CategoryPage.ejs', { arrCategories: data.arrCategories, isSuccess: data.isSuccess });
 }
 
 export const updateCategory = async (req, res) => {
     console.log('check data: ', req.body);
-    return res.status(400).send('wrong');
+    const data = await updateCate(req.body);
+    console.log('check: ', data);
+    if (data.errorUpdate) {
+        return res.status(400).send({ arrCategories: data.arrCategories, errorUpdate: data.errorUpdate });
+    }
+    return res.status(200).json({ arrCategories: data.arrCategories, isUpdate: data.isUpdate });
 }
 
 export const deleteCategory = async (req, res) => {
