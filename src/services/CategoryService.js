@@ -156,14 +156,17 @@ export const updateCate = async (cate) => {
                     arrCategories: arr
                 })
             }
+            console.log('test var: ', cate);
             let isExist = await checkCateName(cate.name);
             if (isExist) {
-                error.isDup = 'Name Duplicated';
-                isError = true;
-                resolve({
-                    errorUpdate: error,
-                    arrCategories: arr
-                })
+                if (cate.name !== cate.currentName) {
+                    error.isDup = 'Name Duplicated';
+                    isError = true;
+                    resolve({
+                        errorUpdate: error,
+                        arrCategories: arr
+                    })
+                }
             }
             if (!isError) {
                 const url = process.env.URL_DB;
