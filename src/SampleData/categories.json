@@ -1,140 +1,42 @@
-[{
-  "_id": {
-    "$oid": "65adca5282ed81f144460d18"
+[
+  {
+    "name": "Cattleya",
+    "description": "The Queen of orchids"
   },
-  "name": "Cattleya",
-  "description": "The Queen of orchids",
-  "__v": 0,
-  "createdAt": {
-    "$date": "2024-01-22T01:52:18.780Z"
+  {
+    "name": "Dendrobium",
+    "description": "Known for diversity and durability"
   },
-  "updatedAt": {
-    "$date": "2024-01-22T01:52:18.780Z"
+  {
+    "name": "Phalaenopsis",
+    "description": "Often called the Moth Orchid"
+  },
+  {
+    "name": "Oncidium",
+    "description": "Recognized by its dancing lady-shaped flowers"
+  },
+  {
+    "name": "Vanda",
+    "description": "Known for large, vibrant flowers"
+  },
+  {
+    "name": "Cymbidium",
+    "description": "Popular for its use in corsages"
+  },
+  {
+    "name": "Miltonia",
+    "description": "Nicknamed the Pansy Orchid"
+  },
+  {
+    "name": "Masdevallia",
+    "description": "Distinctive for its showy and colorful blooms"
+  },
+  {
+    "name": "Epidendrum",
+    "description": "Characterized by its reed-like stems"
+  },
+  {
+    "name": "Laelia",
+    "description": "Often fragrant and elegant in appearance"
   }
-},
-{
-  "_id": {
-    "$oid": "65adca5282ed81f144460d19"
-  },
-  "name": "Dendrobium",
-  "description": "Known for diversity and durability",
-  "__v": 0,
-  "createdAt": {
-    "$date": "2024-01-22T01:52:18.781Z"
-  },
-  "updatedAt": {
-    "$date": "2024-01-22T01:52:18.781Z"
-  }
-},
-{
-  "_id": {
-    "$oid": "65adca5282ed81f144460d1a"
-  },
-  "name": "Phalaenopsis",
-  "description": "Often called the Moth Orchid",
-  "__v": 0,
-  "createdAt": {
-    "$date": "2024-01-22T01:52:18.781Z"
-  },
-  "updatedAt": {
-    "$date": "2024-01-22T01:52:18.781Z"
-  }
-},
-{
-  "_id": {
-    "$oid": "65adca5282ed81f144460d1b"
-  },
-  "name": "Oncidium",
-  "description": "Recognized by its dancing lady-shaped flowers",
-  "__v": 0,
-  "createdAt": {
-    "$date": "2024-01-22T01:52:18.781Z"
-  },
-  "updatedAt": {
-    "$date": "2024-01-22T01:52:18.781Z"
-  }
-},
-{
-  "_id": {
-    "$oid": "65adca5282ed81f144460d1c"
-  },
-  "name": "Vanda",
-  "description": "Known for large, vibrant flowers",
-  "__v": 0,
-  "createdAt": {
-    "$date": "2024-01-22T01:52:18.781Z"
-  },
-  "updatedAt": {
-    "$date": "2024-01-22T01:52:18.781Z"
-  }
-},
-{
-  "_id": {
-    "$oid": "65adca5282ed81f144460d1d"
-  },
-  "name": "Cymbidium",
-  "description": "Popular for its use in corsages",
-  "__v": 0,
-  "createdAt": {
-    "$date": "2024-01-22T01:52:18.781Z"
-  },
-  "updatedAt": {
-    "$date": "2024-01-22T01:52:18.781Z"
-  }
-},
-{
-  "_id": {
-    "$oid": "65adca5282ed81f144460d1e"
-  },
-  "name": "Miltonia",
-  "description": "Nicknamed the Pansy Orchid",
-  "__v": 0,
-  "createdAt": {
-    "$date": "2024-01-22T01:52:18.781Z"
-  },
-  "updatedAt": {
-    "$date": "2024-01-22T01:52:18.781Z"
-  }
-},
-{
-  "_id": {
-    "$oid": "65adca5282ed81f144460d1f"
-  },
-  "name": "Masdevallia",
-  "description": "Distinctive for its showy and colorful blooms",
-  "__v": 0,
-  "createdAt": {
-    "$date": "2024-01-22T01:52:18.781Z"
-  },
-  "updatedAt": {
-    "$date": "2024-01-22T01:52:18.781Z"
-  }
-},
-{
-  "_id": {
-    "$oid": "65adca5282ed81f144460d20"
-  },
-  "name": "Epidendrum",
-  "description": "Characterized by its reed-like stems",
-  "__v": 0,
-  "createdAt": {
-    "$date": "2024-01-22T01:52:18.782Z"
-  },
-  "updatedAt": {
-    "$date": "2024-01-22T01:52:18.782Z"
-  }
-},
-{
-  "_id": {
-    "$oid": "65adca5282ed81f144460d21"
-  },
-  "name": "Laelia",
-  "description": "Often fragrant and elegant in appearance",
-  "__v": 0,
-  "createdAt": {
-    "$date": "2024-01-22T01:52:18.782Z"
-  },
-  "updatedAt": {
-    "$date": "2024-01-22T01:52:18.782Z"
-  }
-}]
+]
