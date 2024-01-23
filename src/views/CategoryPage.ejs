@@ -78,6 +78,7 @@
 
             document.getElementById('id').value = category.id;
             document.getElementById('cateName').value = category.name;
+            document.getElementById('currentName').value = category.name;
             document.getElementById('description').value = category.description;
             console.log('here');
         }
@@ -89,6 +90,7 @@
                 let category = {};
                 category.id = event.target.elements.id.value;
                 category.name = event.target.elements.cateName.value;
+                category.currentName = event.target.elements.currentName.value;
                 category.description = event.target.elements.description.value;
                 fetch('/categories', {
                     method: 'PUT',
@@ -199,6 +201,7 @@
         <% if (typeof arrCategories !=='undefined' ) { %>
             <form id="update-form" action="/categories">
                 <input id="id" type="text" name="id" hidden />
+                <input id="currentName" type="text" name="currentName" hidden />
                 <div class="input-group">
                     <label for="cateName">Category name:</label>
                     <input id="cateName" type="text" name="cateName" />
