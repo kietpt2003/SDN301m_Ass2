@@ -19,7 +19,6 @@
                 // Prevent the form from submitting
                 event.preventDefault();
                 let cateId = event.target.elements.cateId.value;
-                isClick = true;
                 fetch(`/categories/${cateId}`, {
                     method: 'DELETE',
                     headers: {
@@ -119,11 +118,58 @@
                                 errorMessage += data.errorUpdate.isEmptyDes + '\n';
                             }
                             if (data.errorUpdate.isDup) {
-                                errorMessage += 'Duplicated';
+                                errorMessage += data.errorUpdate.isDup;
                             }
                             alert('Error list:\n' + errorMessage)
                         } else {
-                            alert('Update success')
+                            alert('Update Success!')
+                            location.href = 'http://localhost:8080/categories';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }, { once: true });
+        }
+
+        const handleCreateForm = () => {
+            document.getElementById("create-form").addEventListener("submit", function (event) {
+                // Prevent the form from submitting
+                event.preventDefault();
+                let category = {};
+                category.cateName = event.target.elements.cateName.value;
+                category.description = event.target.elements.description.value;
+                fetch('/categories', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(category)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json(); // Parse the JSON in the response
+                    })
+                    .then(data => {
+                        // Access the data returned from the server
+                        console.log('arrCategories:', data.arrCategories);
+                        console.log('check err: ', data.error);
+                        if (!data.isSuccess) {
+                            let errorMessage = ''
+                            if (data.error.isEmptyName) {
+                                errorMessage += data.error.isEmptyName + '\n';
+                            }
+                            if (data.error.isEmptyDes) {
+                                errorMessage += data.error.isEmptyDes + '\n';
+                            }
+                            if (data.error.isDup) {
+                                errorMessage += data.error.isDup;
+                            }
+                            alert('Error list:\n' + errorMessage)
+                        } else {
+                            alert('Create Success!')
                             location.href = 'http://localhost:8080/categories';
                         }
                     })
@@ -144,7 +190,7 @@
 
     <div class="create-form">
         <h2>Create Category Form</h2>
-        <form action="/categories" method="post">
+        <form id="create-form" action="/categories" method="post">
             <div class="input-group">
                 <label for="cateName">Category name:</label>
                 <input type="text" name="cateName" />
@@ -170,7 +216,7 @@
                                     <% } %>
                                         <% } %>
                                             <div class="input-group">
-                                                <button>Create</button>
+                                                <button onclick="handleCreateForm()">Create</button>
                                             </div>
                                             <!-- Duplicate -->
                                             <% if (typeof error !=='undefined' ) { %>
