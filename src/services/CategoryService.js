@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import Categories from '../models/Categories'
-// import { connectDB } from "../config/configDB";
 
 export const getAllCategories = async () => {
     const url = process.env.URL_DB;
