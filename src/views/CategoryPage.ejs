@@ -45,6 +45,7 @@
             document.getElementById('id').value = category.id;
             document.getElementById('cateName').value = category.name;
             document.getElementById('description').value = category.description;
+            console.log('here');
         }
 
         const handleUpdateForm = () => {
@@ -54,18 +55,34 @@
                 let category = {};
                 category.id = event.target.elements.id.value;
                 category.name = event.target.elements.cateName.value;
-                category.description = event.target.elements.description.value
+                category.description = event.target.elements.description.value;
                 fetch('/categories', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(category)
-                }).then((response) => {
-                    console.log('check status: ', response.status);
                 })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json(); // Parse the JSON in the response
+                    })
+                    .then(data => {
+                        // Access the data returned from the server
+                        console.log('arrCategories:', data.arrCategories);
+                        console.log('isUpdate:', data.isUpdate);
+
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
             });
         }
+
+        getSelectedValue()
 
     </script>
 </head>
@@ -122,6 +139,7 @@
         <div class="custom-select">
             <label for="category">Choose category:</label>
             <select onchange="getSelectedValue()" id="mySelect">
+                <option value="" selected disabled hidden>Choose here</option>
                 <% if (typeof arrCategories !=='undefined' ) { %>
                     <% arrCategories.forEach(function(category, index) { %>
                         <option value="<%=category._id%>&&<%=category.name%>&&<%=category.description%>">
@@ -139,10 +157,10 @@
                     <input id="cateName" type="text" name="cateName" />
                 </div>
                 <!-- Empty name -->
-                <% if (typeof error !=='undefined' ) { %>
-                    <% if (typeof error.isEmptyName !=='undefined' ) { %>
+                <% if (typeof errorUpdate !=='undefined' ) { %>
+                    <% if (typeof errorUpdate.isEmptyName !=='undefined' ) { %>
                         <p class="error">
-                            <%= error.isEmptyName %>
+                            <%= errorUpdate.isEmptyName %>
                         </p>
                         <% } %>
                             <% } %>
@@ -151,10 +169,10 @@
                                     <input id="description" type="text" name="description">
                                 </div>
                                 <!-- Empty Description -->
-                                <% if (typeof error !=='undefined' ) { %>
-                                    <% if (typeof error.isEmptyDes !=='undefined' ) { %>
+                                <% if (typeof errorUpdate !=='undefined' ) { %>
+                                    <% if (typeof errorUpdate.isEmptyDes !=='undefined' ) { %>
                                         <p class="error">
-                                            <%= error.isEmptyDes %>
+                                            <%= errorUpdate.isEmptyDes %>
                                         </p>
                                         <% } %>
                                             <% } %>
@@ -162,10 +180,10 @@
                                                     <button onclick="handleUpdateForm()" type="submit">Update</button>
                                                 </div>
                                                 <!-- Duplicate -->
-                                                <% if (typeof error !=='undefined' ) { %>
-                                                    <% if (typeof error.isDup !=='undefined' ) { %>
+                                                <% if (typeof errorUpdate !=='undefined' ) { %>
+                                                    <% if (typeof errorUpdate.isDup !=='undefined' ) { %>
                                                         <p class="error">
-                                                            <%= error.isDup %>
+                                                            <%= errorUpdate.isDup %>
                                                         </p>
                                                         <% } %>
                                                             <% } %>
