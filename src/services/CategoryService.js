@@ -86,19 +86,27 @@ export const createCategory = async (newCategory) => {
 let checkCateName = (name) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let category = await Categories.findOne({ name: name })
-                .then((category) => {
-                    return category;
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-            if (category) {
-                resolve(true);
-            }
-            resolve(false);
+            const url = process.env.URL_DB;
+            const connect = mongoose.connect(url, { family: 4 });
+            connect.then(() => {
+                Categories.findOne({ name: name })
+                    .then(async (category) => {
+                        if (category) {
+                            await mongoose.disconnect();
+                            resolve(true);
+                        } else {
+                            await mongoose.disconnect();
+                            resolve(false);
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        resolve(false);
+                    });
+            })
         } catch (error) {
-            reject(error)
+            console.log('Catch error: ', error);
+            reject(false);
         }
     })
 }
@@ -125,6 +133,66 @@ let checkCategoryById = (id) => {
             })
         } catch (error) {
             reject(error)
+        }
+    })
+}
+
+export const updateCate = async (cate) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let error = {}
+            let isError = false
+            let arr = await getAllCategories();
+            if (cate.name === '' || cate.name === undefined) {
+                error.isEmptyName = 'Name cannot be empty';
+                isError = true;
+            }
+            if (cate.description === '' || cate.description === undefined) {
+                error.isEmptyDes = 'Description cannot be empty';
+                isError = true;
+            }
+            if (isError) {
+                resolve({
+                    errorUpdate: error,
+                    arrCategories: arr
+                })
+            }
+            let isExist = await checkCateName(cate.name);
+            if (isExist) {
+                error.isDup = 'Name Duplicated';
+                isError = true;
+                resolve({
+                    errorUpdate: error,
+                    arrCategories: arr
+                })
+            }
+            if (!isError) {
+                const url = process.env.URL_DB;
+                const connect = mongoose.connect(url, { family: 4 });
+                connect.then(() => {
+                    Categories.updateOne({ _id: cate.id }, { $set: { name: cate.name, description: cate.description } })
+                        .then(async (isUpdated) => {
+                            if (isUpdated.modifiedCount >= 1) {
+                                arr = await getAllCategories();
+                                await mongoose.disconnect();
+                                resolve({
+                                    arrCategories: arr,
+                                    isUpdate: true
+                                });
+                            } else {
+                                error.createfailed = 'Something wrong';
+                                await mongoose.disconnect();
+                                resolve({
+                                    errorUpdate: error,
+                                    arrCategories: arr
+                                })
+                            }
+                        });
+                })
+            }
+        } catch (error) {
+            console.log('Something wrong: ', error)
+            reject(error);
         }
     })
 }
