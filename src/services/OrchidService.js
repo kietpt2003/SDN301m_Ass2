@@ -27,7 +27,7 @@ export const createOrchid = async (newOrchid) => {
         try {
             let error = {}
             let isError = false
-            let arr = await getAllOrchids();
+            // let arr = await getAllOrchids();
             if (newOrchid.orchidName === '' || newOrchid.orchidName === undefined) {
                 error.isEmptyName = 'Name cannot be empty';
                 isError = true;
@@ -55,7 +55,7 @@ export const createOrchid = async (newOrchid) => {
             if (isError) {
                 resolve({
                     error: error,
-                    arrOrchids: arr
+                    // arrOrchids: arr
                 })
             }
             let isExist = await checkOrchidName(newOrchid.orchidName);
@@ -64,7 +64,7 @@ export const createOrchid = async (newOrchid) => {
                 isError = true;
                 resolve({
                     error: error,
-                    arrOrchids: arr
+                    // arrOrchids: arr
                 })
             }
             if (!isError) {
@@ -74,10 +74,11 @@ export const createOrchid = async (newOrchid) => {
                     Orchids({ name: newOrchid.orchidName, image: newOrchid.image, price: newOrchid.price, original: newOrchid.original, isNatural: newOrchid.isNatural === 'true' ? true : false, color: newOrchid.color }).save()
                         .then(async (orc) => {
                             if (orc) {
-                                arr = await getAllOrchids();
+                                // arr = await getAllOrchids();
                                 await mongoose.disconnect();
                                 resolve({
-                                    arrOrchids: arr,
+                                    // arrOrchids: arr,
+                                    data: orc,
                                     isSuccess: true
                                 });
                             } else {
@@ -85,7 +86,7 @@ export const createOrchid = async (newOrchid) => {
                                 await mongoose.disconnect();
                                 resolve({
                                     error: error,
-                                    arrOrchids: arr
+                                    // arrOrchids: arr
                                 })
                             }
                         });
@@ -93,7 +94,7 @@ export const createOrchid = async (newOrchid) => {
             }
         } catch (error) {
             await mongoose.disconnect();
-            reject(error);
+            resolve(error);
         }
     })
 }
@@ -121,7 +122,7 @@ let checkOrchidName = (name) => {
             })
         } catch (error) {
             console.log('Catch error: ', error);
-            reject(false);
+            resolve(false);
         }
     })
 }
@@ -147,7 +148,7 @@ let checkOrchidById = (id) => {
                     });
             })
         } catch (error) {
-            reject(error)
+            resolve(error)
         }
     })
 }
@@ -157,45 +158,56 @@ export const updateOrc = async (orc) => {
         try {
             let error = {}
             let isError = false
-            let arr = await getAllOrchids();
-            if (orc.name === '' || orc.name === undefined) {
-                error.isEmptyName = 'Name cannot be empty';
-                isError = true;
-            }
-            if (orc.image === '' || orc.image === undefined) {
-                error.isEmptyImg = 'Image URL cannot be empty';
-                isError = true;
-            }
-            if (orc.price === '' || orc.price === undefined) {
-                error.isEmptyPrice = 'Price cannot be empty';
-                isError = true;
-            }
-            if (orc.original === '' || orc.original === undefined) {
-                error.isEmptyOriginal = 'Original cannot be empty';
-                isError = true;
-            }
-            if (orc.isNatural === '' || orc.isNatural === undefined) {
-                error.isEmptyNatural = 'Natural cannot be empty';
-                isError = true;
-            }
-            if (orc.color === '' || orc.color === undefined) {
-                error.isEmptyColor = 'Color cannot be empty';
-                isError = true;
-            }
-            if (isError) {
-                resolve({
-                    errorUpdate: error,
-                    arrOrchids: arr
-                })
-            }
-            let isExist = await checkOrchidName(orc.name);
+            // let arr = await getAllOrchids();
+            let isExist = await checkOrchidById(orc.id);
             if (isExist) {
-                error.isDup = 'Name Duplicated';
-                isError = true;
+                if (orc.name === '' || orc.name === undefined) {
+                    error.isEmptyName = 'Name cannot be empty';
+                    isError = true;
+                }
+                if (orc.image === '' || orc.image === undefined) {
+                    error.isEmptyImg = 'Image URL cannot be empty';
+                    isError = true;
+                }
+                if (orc.price === '' || orc.price === undefined) {
+                    error.isEmptyPrice = 'Price cannot be empty';
+                    isError = true;
+                }
+                if (orc.original === '' || orc.original === undefined) {
+                    error.isEmptyOriginal = 'Original cannot be empty';
+                    isError = true;
+                }
+                if (orc.isNatural === '' || orc.isNatural === undefined) {
+                    error.isEmptyNatural = 'Natural cannot be empty';
+                    isError = true;
+                }
+                if (orc.color === '' || orc.color === undefined) {
+                    error.isEmptyColor = 'Color cannot be empty';
+                    isError = true;
+                }
+                if (isError) {
+                    resolve({
+                        errorUpdate: error,
+                        // arrOrchids: arr
+                    })
+                }
+            } else {
+                error.invalidId = "Id doesn't exist.";
                 resolve({
                     errorUpdate: error,
-                    arrOrchids: arr
+                    // arrCategories: arr
                 })
+            }
+            isExist = await checkOrchidName(orc.name);
+            if (isExist) {
+                if (orc.name !== orc.currentName) {
+                    error.isDup = 'Name Duplicated';
+                    isError = true;
+                    resolve({
+                        errorUpdate: error,
+                        // arrOrchids: arr
+                    })
+                }
             }
             if (!isError) {
                 const url = process.env.URL_DB;
@@ -204,10 +216,11 @@ export const updateOrc = async (orc) => {
                     Orchids.updateOne({ _id: orc.id }, { $set: { name: orc.name, image: orc.image, price: orc.price, original: orc.original, isNatural: orc.isNatural === 'true' ? true : false, color: orc.color } })
                         .then(async (isUpdated) => {
                             if (isUpdated.modifiedCount >= 1) {
-                                arr = await getAllOrchids();
+                                // arr = await getAllOrchids();
                                 await mongoose.disconnect();
                                 resolve({
-                                    arrOrchids: arr,
+                                    // arrOrchids: arr,
+                                    data: isUpdated,
                                     isUpdate: true
                                 });
                             } else {
@@ -215,7 +228,7 @@ export const updateOrc = async (orc) => {
                                 await mongoose.disconnect();
                                 resolve({
                                     errorUpdate: error,
-                                    arrOrchids: arr
+                                    // arrOrchids: arr
                                 })
                             }
                         });
@@ -223,7 +236,7 @@ export const updateOrc = async (orc) => {
             }
         } catch (error) {
             console.log('Something wrong: ', error)
-            reject(error);
+            resolve(error);
         }
     })
 }
@@ -232,22 +245,21 @@ export const deleteOrchidById = async (id) => {
     return new Promise(async (resolve, reject) => {
         try {
             const error = {}
-            let arrOrchids = await getAllOrchids();
+            // let arrOrchids = await getAllOrchids();
             const isExist = await checkOrchidById(id);
             if (isExist) {
                 const url = process.env.URL_DB;
                 const connect = mongoose.connect(url, { family: 4 });
                 connect.then(() => {
-                    console.log('vo day roi');
                     Orchids.deleteOne({ "_id": id })
                         .then(async (category) => {
-                            console.log('delete: ', category);
-                            arrOrchids = await getAllOrchids();
+                            // arrOrchids = await getAllOrchids();
                             await mongoose.disconnect();
                             resolve(
                                 {
+                                    data: category,
                                     deleteSuccess: true,
-                                    arrOrchids: arrOrchids
+                                    // arrOrchids: arrOrchids
                                 }
                             )
                             return category;
@@ -256,25 +268,25 @@ export const deleteOrchidById = async (id) => {
                             console.log('error check: ', err);
                             error.dbError = 'Something wrong with DB';
                             await mongoose.disconnect();
-                            reject(
+                            resolve(
                                 {
                                     error: error,
-                                    arrOrchids: arrOrchids
+                                    // arrOrchids: arrOrchids
                                 }
                             )
                         });
                 })
             } else {
                 error.missingId = 'Missing Id or wrong Id'
-                reject(
+                resolve(
                     {
                         error: error,
-                        arrOrchids: arrOrchids
+                        // arrOrchids: arrOrchids
                     }
                 )
             }
         } catch (error) {
-            reject(error)
+            resolve(error)
         }
     })
 }
