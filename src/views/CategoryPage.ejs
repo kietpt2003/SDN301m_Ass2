@@ -12,8 +12,42 @@
         // When the user clicks on <div>, open the popup
         function myFunction(index) {
             console.log('test: ', index);
-            var popup = document.getElementById(`myPopup${index}`);
+            let popup = document.getElementById(`myPopup${index}`);
             popup.classList.toggle("show");
+
+            document.getElementById(`delete-form${index}`).addEventListener("submit", function (event) {
+                // Prevent the form from submitting
+                event.preventDefault();
+                let cateId = event.target.elements.cateId.value;
+                isClick = true;
+                fetch(`/categories/${cateId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json(); // Parse the JSON in the response
+                    })
+                    .then(data => {
+                        if (!data.deleteSuccess) {
+                            let errorMessage = ''
+                            if (data.error) {
+                                errorMessage += data.error;
+                            }
+                            alert('Error list:\n' + errorMessage)
+                        } else {
+                            alert('Delete success');
+                            location.href = 'http://localhost:8080/categories';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
         }
 
         function splitString(inputString) {
@@ -73,16 +107,29 @@
                         // Access the data returned from the server
                         console.log('arrCategories:', data.arrCategories);
                         console.log('isUpdate:', data.isUpdate);
-
-                        location.reload();
+                        console.log('check err: ', data.errorUpdate);
+                        if (!data.isUpdate) {
+                            let errorMessage = ''
+                            if (data.errorUpdate.isEmptyName) {
+                                errorMessage += data.errorUpdate.isEmptyName + '\n';
+                            }
+                            if (data.errorUpdate.isEmptyDes) {
+                                errorMessage += data.errorUpdate.isEmptyDes + '\n';
+                            }
+                            if (data.errorUpdate.isDup) {
+                                errorMessage += 'Duplicated';
+                            }
+                            alert('Error list:\n' + errorMessage)
+                        } else {
+                            alert('Update success')
+                            location.href = 'http://localhost:8080/categories';
+                        }
                     })
                     .catch(error => {
                         console.error('Error:', error);
                     });
-            });
+            }, { once: true });
         }
-
-        getSelectedValue()
 
     </script>
 </head>
@@ -195,12 +242,15 @@
         <div class="container">
             <% arrCategories.forEach(function(category, index) { %>
                 <div class="category">
-                    <form class="category-top" action="/categories/<%= category._id %>" method="post">
+                    <form id="delete-form<%= index %>" class="category-top" action="/categories/<%= category._id %>"
+                        method="post">
+                        <input id="cateId" type="text" name="cateId" value="<%= category._id %>" hidden />
                         <div class="cate-header">
                             <h4 class="category-collection">Category Collection
                             </h4>
-                            <div class="popup" onclick="myFunction(<%= index %>)">
-                                <span class="material-symbols-outlined">
+                            <div class="popup">
+                                <span onclick="myFunction(<%= index %>)" for="myPopup<%= index %>"
+                                    class="material-symbols-outlined">
                                     delete
                                 </span>
                                 <button class="popuptext" id="myPopup<%= index %>">
@@ -233,13 +283,6 @@
                         Create success!!
                     </div>
                     <% } %>
-                        <!-- Delete Success -->
-                        <% if (typeof deleteSuccess !=='undefined' ) { %>
-                            <div class="alert">
-                                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                                Delete success!!
-                            </div>
-                            <% } %>
 </body>
 
 </html>
