@@ -7,7 +7,7 @@ const initCategoryRouter = (app) => {
     router.get('/', getCategories); //method get <=> read data
     router.post('/', postCategory);
     router.put('/', updateCategory);
-    router.post('/:id', deleteCategory);
+    router.delete('/:id', deleteCategory);
 
     return app.use('/categories', router);
 }
