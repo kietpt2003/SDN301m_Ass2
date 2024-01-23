@@ -27,7 +27,7 @@ export const createCategory = async (newCategory) => {
         try {
             let error = {}
             let isError = false
-            let arr = await getAllCategories();
+            // let arr = await getAllCategories();
             if (newCategory.cateName === '' || newCategory.cateName === undefined) {
                 error.isEmptyName = 'Name cannot be empty';
                 isError = true;
@@ -39,7 +39,7 @@ export const createCategory = async (newCategory) => {
             if (isError) {
                 resolve({
                     error: error,
-                    arrCategories: arr
+                    // arrCategories: arr
                 })
             }
             let isExist = await checkCateName(newCategory.cateName);
@@ -48,7 +48,7 @@ export const createCategory = async (newCategory) => {
                 isError = true;
                 resolve({
                     error: error,
-                    arrCategories: arr
+                    // arrCategories: arr
                 })
             }
             if (!isError) {
@@ -58,10 +58,11 @@ export const createCategory = async (newCategory) => {
                     Categories({ name: newCategory.cateName, description: newCategory.description }).save()
                         .then(async (cate) => {
                             if (cate) {
-                                arr = await getAllCategories();
+                                // arr = await getAllCategories();
                                 await mongoose.disconnect();
                                 resolve({
-                                    arrCategories: arr,
+                                    // arrCategories: arr,
+                                    data: cate,
                                     isSuccess: true
                                 });
                             } else {
@@ -69,7 +70,7 @@ export const createCategory = async (newCategory) => {
                                 await mongoose.disconnect();
                                 resolve({
                                     error: error,
-                                    arrCategories: arr
+                                    // arrCategories: arr
                                 })
                             }
                         });
@@ -77,7 +78,7 @@ export const createCategory = async (newCategory) => {
             }
         } catch (error) {
             await mongoose.disconnect();
-            reject(error);
+            resolve(error);
         }
     })
 }
@@ -105,7 +106,7 @@ let checkCateName = (name) => {
             })
         } catch (error) {
             console.log('Catch error: ', error);
-            reject(false);
+            resolve(false);
         }
     })
 }
@@ -131,7 +132,7 @@ let checkCategoryById = (id) => {
                     });
             })
         } catch (error) {
-            reject(error)
+            resolve(error)
         }
     })
 }
@@ -141,30 +142,38 @@ export const updateCate = async (cate) => {
         try {
             let error = {}
             let isError = false
-            let arr = await getAllCategories();
-            if (cate.name === '' || cate.name === undefined) {
-                error.isEmptyName = 'Name cannot be empty';
-                isError = true;
-            }
-            if (cate.description === '' || cate.description === undefined) {
-                error.isEmptyDes = 'Description cannot be empty';
-                isError = true;
-            }
-            if (isError) {
+            // let arr = await getAllCategories();
+            let isExist = await checkCategoryById(cate.id);
+            if (isExist) {
+                if (cate.name === '' || cate.name === undefined) {
+                    error.isEmptyName = 'Name cannot be empty';
+                    isError = true;
+                }
+                if (cate.description === '' || cate.description === undefined) {
+                    error.isEmptyDes = 'Description cannot be empty';
+                    isError = true;
+                }
+                if (isError) {
+                    resolve({
+                        errorUpdate: error,
+                        // arrCategories: arr
+                    })
+                }
+            } else {
+                error.invalidId = "Id doesn't exist.";
                 resolve({
                     errorUpdate: error,
-                    arrCategories: arr
+                    // arrCategories: arr
                 })
             }
-            console.log('test var: ', cate);
-            let isExist = await checkCateName(cate.name);
+            isExist = await checkCateName(cate.name);
             if (isExist) {
                 if (cate.name !== cate.currentName) {
                     error.isDup = 'Name Duplicated';
                     isError = true;
                     resolve({
                         errorUpdate: error,
-                        arrCategories: arr
+                        // arrCategories: arr
                     })
                 }
             }
@@ -175,10 +184,11 @@ export const updateCate = async (cate) => {
                     Categories.updateOne({ _id: cate.id }, { $set: { name: cate.name, description: cate.description } })
                         .then(async (isUpdated) => {
                             if (isUpdated.modifiedCount >= 1) {
-                                arr = await getAllCategories();
+                                // arr = await getAllCategories();
                                 await mongoose.disconnect();
                                 resolve({
-                                    arrCategories: arr,
+                                    // arrCategories: arr,
+                                    data: isUpdated,
                                     isUpdate: true
                                 });
                             } else {
@@ -186,7 +196,7 @@ export const updateCate = async (cate) => {
                                 await mongoose.disconnect();
                                 resolve({
                                     errorUpdate: error,
-                                    arrCategories: arr
+                                    // arrCategories: arr
                                 })
                             }
                         });
@@ -194,7 +204,7 @@ export const updateCate = async (cate) => {
             }
         } catch (error) {
             console.log('Something wrong: ', error)
-            reject(error);
+            resolve(error);
         }
     })
 }
@@ -203,22 +213,21 @@ export const deleteCategoryById = async (id) => {
     return new Promise(async (resolve, reject) => {
         try {
             const error = {}
-            let arrCategories = await getAllCategories();
+            // let arrCategories = await getAllCategories();
             const isExist = await checkCategoryById(id);
             if (isExist) {
                 const url = process.env.URL_DB;
                 const connect = mongoose.connect(url, { family: 4 });
                 connect.then(() => {
-                    console.log('vo day roi');
                     Categories.deleteOne({ "_id": id })
                         .then(async (category) => {
-                            console.log('delete: ', category);
-                            arrCategories = await getAllCategories();
+                            // arrCategories = await getAllCategories();
                             await mongoose.disconnect();
                             resolve(
                                 {
+                                    data: category,
                                     deleteSuccess: true,
-                                    arrCategories: arrCategories
+                                    // arrCategories: arrCategories
                                 }
                             )
                             return category;
@@ -227,25 +236,25 @@ export const deleteCategoryById = async (id) => {
                             console.log('error check: ', err);
                             error.dbError = 'Something wrong with DB';
                             await mongoose.disconnect();
-                            reject(
+                            resolve(
                                 {
                                     error: error,
-                                    arrCategories: arrCategories
+                                    // arrCategories: arrCategories
                                 }
                             )
                         });
                 })
             } else {
                 error.missingId = 'Missing Id or wrong Id'
-                reject(
+                resolve(
                     {
                         error: error,
-                        arrCategories: arrCategories
+                        // arrCategories: arrCategories
                     }
                 )
             }
         } catch (error) {
-            reject(error)
+            resolve({ error: error })
         }
     })
 }
