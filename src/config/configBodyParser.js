@@ -1,7 +1,5 @@
-import bodyParser from "body-parser";
+import express from "express";
 
 export const configBodyParse = (app) => {
-    //config app
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(express.json());
 }
