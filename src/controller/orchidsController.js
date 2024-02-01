@@ -19,8 +19,9 @@ export const postOrchid = async (req, res) => {
     // return res.status(200).render('OrchidHomePage.ejs', { arrOrchids: data.arrOrchids, isSuccess: data.isSuccess });
     return res.status(200).json({
         status: 200,
+        message: "Create Success",
         data: data.data,
-        error: data.error
+        isSuccess: data.isSuccess,
     });
 }
 

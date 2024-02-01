@@ -26,9 +26,6 @@
                     }
                 })
                     .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
                         return response.json(); // Parse the JSON in the response
                     })
                     .then(data => {
@@ -99,9 +96,6 @@
                     body: JSON.stringify(category)
                 })
                     .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
                         return response.json(); // Parse the JSON in the response
                     })
                     .then(data => {
@@ -118,7 +112,10 @@
                                 errorMessage += data.errorUpdate.isEmptyDes + '\n';
                             }
                             if (data.errorUpdate.isDup) {
-                                errorMessage += data.errorUpdate.isDup;
+                                errorMessage += data.errorUpdate.isDup + '\n';
+                            }
+                            if (data.errorUpdate.invalidId) {
+                                errorMessage += data.errorUpdate.invalidId + '\n';
                             }
                             alert('Error list:\n' + errorMessage)
                         } else {
@@ -147,14 +144,12 @@
                     body: JSON.stringify(category)
                 })
                     .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
                         return response.json(); // Parse the JSON in the response
                     })
                     .then(data => {
                         // Access the data returned from the server
-                        console.log('arrCategories:', data.arrCategories);
+                        // console.log('arrCategories:', data.arrCategories);
+                        console.log('isSuccess:', data.isSuccess);
                         console.log('check err: ', data.error);
                         if (!data.isSuccess) {
                             let errorMessage = ''
@@ -165,7 +160,7 @@
                                 errorMessage += data.error.isEmptyDes + '\n';
                             }
                             if (data.error.isDup) {
-                                errorMessage += data.error.isDup;
+                                errorMessage += data.error.isDup + '\n';
                             }
                             alert('Error list:\n' + errorMessage)
                         } else {

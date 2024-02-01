@@ -21,6 +21,11 @@ export const getAllOrchids = async () => {
 
     return arrOrchids;
 }
+function isNumber(str) {
+    // Sử dụng hàm isNaN để kiểm tra xem giá trị của chuỗi có phải là số hay không
+    // Đồng thời sử dụng hàm trim để loại bỏ các khoảng trắng từ đầu và cuối chuỗi
+    return !isNaN(parseFloat(str)) && isFinite(str.trim());
+}
 
 export const createOrchid = async (newOrchid) => {
     return new Promise(async (resolve, reject) => {
@@ -28,7 +33,7 @@ export const createOrchid = async (newOrchid) => {
             let error = {}
             let isError = false
             // let arr = await getAllOrchids();
-            if (newOrchid.orchidName === '' || newOrchid.orchidName === undefined) {
+            if (newOrchid.name === '' || newOrchid.name === undefined) {
                 error.isEmptyName = 'Name cannot be empty';
                 isError = true;
             }
@@ -39,6 +44,11 @@ export const createOrchid = async (newOrchid) => {
             if (newOrchid.price === '' || newOrchid.price === undefined) {
                 error.isEmptyPrice = 'Price cannot be empty';
                 isError = true;
+            } else {
+                if (!isNumber(newOrchid.price)) {
+                    error.invalidPrice = 'Price must be a number';
+                    isError = true;
+                }
             }
             if (newOrchid.original === '' || newOrchid.original === undefined) {
                 error.isEmptyOriginal = 'Original cannot be empty';
@@ -47,6 +57,11 @@ export const createOrchid = async (newOrchid) => {
             if (newOrchid.isNatural === '' || newOrchid.isNatural === undefined) {
                 error.isEmptyNatural = 'Natural cannot be empty';
                 isError = true;
+            } else {
+                if (newOrchid.isNatural !== 'true' && newOrchid.isNatural !== 'false') {
+                    error.isEmptyNatural = `Natural must be 'true' or 'false'`;
+                    isError = true;
+                }
             }
             if (newOrchid.color === '' || newOrchid.color === undefined) {
                 error.isEmptyColor = 'Color cannot be empty';
@@ -58,7 +73,7 @@ export const createOrchid = async (newOrchid) => {
                     // arrOrchids: arr
                 })
             }
-            let isExist = await checkOrchidName(newOrchid.orchidName);
+            let isExist = await checkOrchidName(newOrchid.name);
             if (isExist) {
                 error.isDup = 'Name Duplicated';
                 isError = true;
@@ -71,7 +86,7 @@ export const createOrchid = async (newOrchid) => {
                 const url = process.env.URL_DB;
                 const connect = mongoose.connect(url, { family: 4 });
                 connect.then(() => {
-                    Orchids({ name: newOrchid.orchidName, image: newOrchid.image, price: newOrchid.price, original: newOrchid.original, isNatural: newOrchid.isNatural === 'true' ? true : false, color: newOrchid.color }).save()
+                    Orchids({ name: newOrchid.name, image: newOrchid.image, price: newOrchid.price, original: newOrchid.original, isNatural: newOrchid.isNatural === 'true' ? true : false, color: newOrchid.color }).save()
                         .then(async (orc) => {
                             if (orc) {
                                 // arr = await getAllOrchids();
@@ -130,23 +145,27 @@ let checkOrchidName = (name) => {
 let checkOrchidById = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const url = process.env.URL_DB;
-            const connect = mongoose.connect(url, { family: 4 });
-            connect.then(() => {
-                Orchids.findOne({ _id: id })
-                    .then((orchid) => {
-                        mongoose.disconnect().then(() => {
-                            if (orchid) {
-                                resolve(true);
-                            }
+            if (id !== '' && id !== undefined) {
+                const url = process.env.URL_DB;
+                const connect = mongoose.connect(url, { family: 4 });
+                connect.then(() => {
+                    Orchids.findOne({ _id: id })
+                        .then((orchid) => {
+                            mongoose.disconnect().then(() => {
+                                if (orchid) {
+                                    resolve(true);
+                                }
+                                resolve(false);
+                            });
+                        })
+                        .catch((err) => {
+                            console.log(err);
                             resolve(false);
                         });
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                        resolve(false);
-                    });
-            })
+                })
+            } else {
+                resolve(false);
+            }
         } catch (error) {
             resolve(error)
         }
@@ -157,9 +176,18 @@ export const updateOrc = async (orc) => {
     return new Promise(async (resolve, reject) => {
         try {
             let error = {}
-            let isError = false
+            let isError = false;
+            let isExist = false;
             // let arr = await getAllOrchids();
-            let isExist = await checkOrchidById(orc.id);
+            if (orc.id === '' || orc.id === undefined) {
+                error.invalidId = "Required Id";
+                isError = true;
+                return resolve({
+                    errorUpdate: error
+                });
+            } else {
+                isExist = await checkOrchidById(orc.id);
+            }
             if (isExist) {
                 if (orc.name === '' || orc.name === undefined) {
                     error.isEmptyName = 'Name cannot be empty';
@@ -172,6 +200,11 @@ export const updateOrc = async (orc) => {
                 if (orc.price === '' || orc.price === undefined) {
                     error.isEmptyPrice = 'Price cannot be empty';
                     isError = true;
+                } else {
+                    if (!isNumber(orc.price)) {
+                        error.invalidPrice = 'Price must be a number';
+                        isError = true;
+                    }
                 }
                 if (orc.original === '' || orc.original === undefined) {
                     error.isEmptyOriginal = 'Original cannot be empty';
@@ -186,28 +219,29 @@ export const updateOrc = async (orc) => {
                     isError = true;
                 }
                 if (isError) {
-                    resolve({
+                    return resolve({
                         errorUpdate: error,
                         // arrOrchids: arr
                     })
+                }
+                isExist = await checkOrchidName(orc.name);
+                if (isExist) {
+                    if (orc.name !== orc.currentName) {
+                        error.isDup = 'Name Duplicated';
+                        isError = true;
+                        return resolve({
+                            errorUpdate: error,
+                            // arrOrchids: arr
+                        })
+                    }
                 }
             } else {
                 error.invalidId = "Id doesn't exist.";
-                resolve({
+                isError = true;
+                return resolve({
                     errorUpdate: error,
                     // arrCategories: arr
                 })
-            }
-            isExist = await checkOrchidName(orc.name);
-            if (isExist) {
-                if (orc.name !== orc.currentName) {
-                    error.isDup = 'Name Duplicated';
-                    isError = true;
-                    resolve({
-                        errorUpdate: error,
-                        // arrOrchids: arr
-                    })
-                }
             }
             if (!isError) {
                 const url = process.env.URL_DB;
@@ -218,7 +252,7 @@ export const updateOrc = async (orc) => {
                             if (isUpdated.modifiedCount >= 1) {
                                 // arr = await getAllOrchids();
                                 await mongoose.disconnect();
-                                resolve({
+                                return resolve({
                                     // arrOrchids: arr,
                                     data: isUpdated,
                                     isUpdate: true
@@ -226,7 +260,7 @@ export const updateOrc = async (orc) => {
                             } else {
                                 error.createfailed = 'Something wrong';
                                 await mongoose.disconnect();
-                                resolve({
+                                return resolve({
                                     errorUpdate: error,
                                     // arrOrchids: arr
                                 })

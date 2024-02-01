@@ -112,9 +112,6 @@
                     body: JSON.stringify(orchid)
                 })
                     .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
                         return response.json(); // Parse the JSON in the response
                     })
                     .then(data => {
@@ -133,6 +130,9 @@
                             if (data.errorUpdate.isEmptyPrice) {
                                 errorMessage += data.errorUpdate.isEmptyPrice + '\n';
                             }
+                            if (data.errorUpdate.invalidPrice) {
+                                errorMessage += data.errorUpdate.invalidPrice + '\n';
+                            }
                             if (data.errorUpdate.isEmptyOriginal) {
                                 errorMessage += data.errorUpdate.isEmptyOriginal + '\n';
                             }
@@ -143,7 +143,10 @@
                                 errorMessage += data.errorUpdate.isEmptyColor + '\n';
                             }
                             if (data.errorUpdate.isDup) {
-                                errorMessage += data.errorUpdate.isDup;
+                                errorMessage += data.errorUpdate.isDup + '\n';
+                            }
+                            if (data.errorUpdate.invalidId) {
+                                errorMessage += data.errorUpdate.invalidId + '\n';
                             }
                             alert('Error list:\n' + errorMessage)
                         } else {
@@ -176,16 +179,13 @@
                     body: JSON.stringify(orchid)
                 })
                     .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
                         return response.json(); // Parse the JSON in the response
                     })
                     .then(data => {
                         // Access the data returned from the server
-                        console.log('arrOrchids:', data.arrOrchids);
+                        console.log('isSuccess:', data.isSuccess);
                         console.log('check err: ', data.error);
-                        if (!data.isUpdate) {
+                        if (!data.isSuccess) {
                             let errorMessage = ''
                             if (data.error.isEmptyName) {
                                 errorMessage += data.error.isEmptyName + '\n';
@@ -195,6 +195,9 @@
                             }
                             if (data.error.isEmptyPrice) {
                                 errorMessage += data.error.isEmptyPrice + '\n';
+                            }
+                            if (data.error.invalidPrice) {
+                                errorMessage += data.error.invalidPrice + '\n';
                             }
                             if (data.error.isEmptyOriginal) {
                                 errorMessage += data.error.isEmptyOriginal + '\n';
@@ -206,7 +209,7 @@
                                 errorMessage += data.error.isEmptyColor + '\n';
                             }
                             if (data.error.isDup) {
-                                errorMessage += data.error.isDup;
+                                errorMessage += data.error.isDup + '\n';
                             }
                             alert('Error list:\n' + errorMessage)
                         } else {
@@ -505,6 +508,10 @@
 
                             <h1 class="product-price">$<%= orchid.price %>
                             </h1>
+                            <p>State: <%= orchid.original %>
+                            </p>
+                            <p>Natural: <%= orchid.isNatural %>
+                            </p>
                             <div class="product-color">
                                 <p class="pick-color">Available Colors:
                                 </p>

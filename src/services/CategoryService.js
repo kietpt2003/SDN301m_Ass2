@@ -114,23 +114,27 @@ let checkCateName = (name) => {
 let checkCategoryById = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const url = process.env.URL_DB;
-            const connect = mongoose.connect(url, { family: 4 });
-            connect.then(() => {
-                Categories.findOne({ _id: id })
-                    .then((category) => {
-                        mongoose.disconnect().then(() => {
-                            if (category) {
-                                resolve(true);
-                            }
+            if (id !== '' && id !== undefined) {
+                const url = process.env.URL_DB;
+                const connect = mongoose.connect(url, { family: 4 });
+                connect.then(() => {
+                    Categories.findOne({ _id: id })
+                        .then((category) => {
+                            mongoose.disconnect().then(() => {
+                                if (category) {
+                                    resolve(true);
+                                }
+                                resolve(false);
+                            });
+                        })
+                        .catch((err) => {
+                            console.log('loi ne: ', err);
                             resolve(false);
                         });
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                        resolve(false);
-                    });
-            })
+                })
+            } else {
+                resolve(false);
+            }
         } catch (error) {
             resolve(error)
         }
@@ -141,9 +145,18 @@ export const updateCate = async (cate) => {
     return new Promise(async (resolve, reject) => {
         try {
             let error = {}
-            let isError = false
+            let isError = false;
+            let isExist = false;
+            if (cate.id === '' || cate.id === undefined) {
+                error.invalidId = "Required Id";
+                isError = true;
+                resolve({
+                    errorUpdate: error
+                });
+            } else {
+                isExist = await checkCategoryById(cate.id);
+            }
             // let arr = await getAllCategories();
-            let isExist = await checkCategoryById(cate.id);
             if (isExist) {
                 if (cate.name === '' || cate.name === undefined) {
                     error.isEmptyName = 'Name cannot be empty';
@@ -159,23 +172,24 @@ export const updateCate = async (cate) => {
                         // arrCategories: arr
                     })
                 }
+                isExist = await checkCateName(cate.name);
+                if (isExist) {
+                    if (cate.name !== cate.currentName) {
+                        error.isDup = 'Name Duplicated';
+                        isError = true;
+                        resolve({
+                            errorUpdate: error,
+                            // arrCategories: arr
+                        })
+                    }
+                }
             } else {
                 error.invalidId = "Id doesn't exist.";
+                isError = true;
                 resolve({
                     errorUpdate: error,
                     // arrCategories: arr
                 })
-            }
-            isExist = await checkCateName(cate.name);
-            if (isExist) {
-                if (cate.name !== cate.currentName) {
-                    error.isDup = 'Name Duplicated';
-                    isError = true;
-                    resolve({
-                        errorUpdate: error,
-                        // arrCategories: arr
-                    })
-                }
             }
             if (!isError) {
                 const url = process.env.URL_DB;
